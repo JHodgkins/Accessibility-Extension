@@ -14,4 +14,12 @@ body {
   label {
     font-size: 16px;
   }
-  
+  .contrast-warning {
+    position: absolute;
+    background-color: yellow;
+    color: black;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 9999;
+  }
