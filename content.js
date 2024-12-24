@@ -1,44 +1,14 @@
-let headingsVisible = false;
-let tabStopsVisible = false;
-let contrastCheckEnabled = false;
-let contrastLevel = 4.5;
 let contrastWarnings = [];
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'toggleHeadings') {
-    headingsVisible = message.checked;
-    showHeadings();
-  }
-  if (message.action === 'toggleTabStops') {
-    tabStopsVisible = message.checked;
-    showTabStops();
-  }
+chrome.runtime.onMessage.addListener((message) => {
   if (message.action === 'toggleContrast') {
-    contrastCheckEnabled = message.checked;
-    contrastLevel = parseFloat(message.contrastLevel);
-    checkContrast();
+    checkContrast(parseFloat(message.contrastLevel));
   }
 });
 
-function showHeadings() {
-  // Outline headings
-  document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
-    heading.style.outline = headingsVisible ? '2px solid red' : 'none';
-  });
-}
-
-function showTabStops() {
-  let focusableElements = document.querySelectorAll('a, button, input, textarea, select, [tabindex]');
-  focusableElements.forEach((el) => {
-    el.style.outline = tabStopsVisible ? '2px dashed blue' : 'none';
-  });
-}
-
-function checkContrast() {
+function checkContrast(contrastLevel) {
   contrastWarnings.forEach(warning => warning.remove());
   contrastWarnings = [];
-
-  if (!contrastCheckEnabled) return;
 
   const elementsToCheck = document.querySelectorAll('p, span, div, h1, h2, h3, h4, h5, h6, a, button');
 
@@ -72,8 +42,8 @@ function luminance(r, g, b) {
 }
 
 function getRGB(color) {
-  const rgb = color.match(/\d+/g);
-  return { r: rgb[0], g: rgb[1], b: rgb[2] };
+  const rgba = color.match(/\d+/g);
+  return { r: rgba[0], g: rgba[1], b: rgba[2] };
 }
 
 function highlightLowContrast(el, contrastRatio) {
