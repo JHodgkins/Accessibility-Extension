@@ -1,88 +1,90 @@
 let headingsVisible = false;
 let tabStopsVisible = false;
-let tabStopLabels = [];
+let contrastCheckEnabled = false;
+let contrastLevel = 4.5;
+let contrastWarnings = [];
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'toggleHeadings') {
     headingsVisible = message.checked;
     showHeadings();
-    sendResponse({status: "Headings toggled"});
   }
   if (message.action === 'toggleTabStops') {
     tabStopsVisible = message.checked;
     showTabStops();
-    sendResponse({status: "Tab stops toggled"});
+  }
+  if (message.action === 'toggleContrast') {
+    contrastCheckEnabled = message.checked;
+    contrastLevel = parseFloat(message.contrastLevel);
+    checkContrast();
   }
 });
 
 function showHeadings() {
-  let styleTag = document.getElementById('heading-style');
-  if (!styleTag) {
-    styleTag = document.createElement('style');
-    styleTag.id = 'heading-style';
-    document.head.appendChild(styleTag);
-  }
-
-  if (headingsVisible) {
-    styleTag.innerHTML = `
-      h1::before, h2::before, h3::before, 
-      h4::before, h5::before, h6::before {
-        content: attr(data-heading);
-        background: red;
-        color: white;
-        padding: 2px 5px;
-        margin-right: 5px;
-        font-weight: bold;
-      }
-      h1, h2, h3, h4, h5, h6 {
-        outline: 2px solid red;
-      }
-    `;
-    document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
-      heading.setAttribute('data-heading', heading.tagName);
-    });
-  } else {
-    styleTag.innerHTML = '';
-    document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
-      heading.removeAttribute('data-heading');
-    });
-  }
+  // Outline headings
+  document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
+    heading.style.outline = headingsVisible ? '2px solid red' : 'none';
+  });
 }
 
 function showTabStops() {
   let focusableElements = document.querySelectorAll('a, button, input, textarea, select, [tabindex]');
-  let index = 1;
-
-  // Remove existing labels if toggle is off
-  tabStopLabels.forEach(label => label.remove());
-  tabStopLabels = [];
-
   focusableElements.forEach((el) => {
-    if (tabStopsVisible) {
-      el.setAttribute('data-tabstop', index);
-      el.style.outline = '2px dashed red';
+    el.style.outline = tabStopsVisible ? '2px dashed blue' : 'none';
+  });
+}
 
-      // Create and position a label
-      const label = document.createElement('div');
-      label.textContent = index++;
-      label.className = 'tab-stop-label';
-      document.body.appendChild(label);
+function checkContrast() {
+  contrastWarnings.forEach(warning => warning.remove());
+  contrastWarnings = [];
 
-      const rect = el.getBoundingClientRect();
-      label.style.position = 'absolute';
-      label.style.left = `${rect.left + window.scrollX + 5}px`;
-      label.style.top = `${rect.top + window.scrollY - 15}px`;
-      label.style.backgroundColor = 'blue';
-      label.style.color = 'white';
-      label.style.padding = '2px 5px';
-      label.style.fontSize = '12px';
-      label.style.borderRadius = '4px';
-      label.style.zIndex = '9999';
+  if (!contrastCheckEnabled) return;
 
-      tabStopLabels.push(label);
-    } else {
-      el.removeAttribute('data-tabstop');
-      el.style.outline = 'none';
+  const elementsToCheck = document.querySelectorAll('p, span, div, h1, h2, h3, h4, h5, h6, a, button');
+
+  elementsToCheck.forEach(el => {
+    const color = window.getComputedStyle(el).color;
+    const bgColor = window.getComputedStyle(el).backgroundColor;
+
+    if (color && bgColor) {
+      const contrastRatio = calculateContrast(color, bgColor);
+      if (contrastRatio < contrastLevel) {
+        highlightLowContrast(el, contrastRatio);
+      }
     }
   });
+}
+
+function calculateContrast(fgColor, bgColor) {
+  const fgRGB = getRGB(fgColor);
+  const bgRGB = getRGB(bgColor);
+  const l1 = luminance(fgRGB.r, fgRGB.g, fgRGB.b);
+  const l2 = luminance(bgRGB.r, bgRGB.g, bgRGB.b);
+  return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+}
+
+function luminance(r, g, b) {
+  const a = [r, g, b].map((v) => {
+    v /= 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  });
+  return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+}
+
+function getRGB(color) {
+  const rgb = color.match(/\d+/g);
+  return { r: rgb[0], g: rgb[1], b: rgb[2] };
+}
+
+function highlightLowContrast(el, contrastRatio) {
+  const warning = document.createElement('div');
+  warning.textContent = `Low Contrast (${contrastRatio.toFixed(2)})`;
+  warning.className = 'contrast-warning';
+  document.body.appendChild(warning);
+
+  const rect = el.getBoundingClientRect();
+  warning.style.left = `${rect.left + window.scrollX}px`;
+  warning.style.top = `${rect.top + window.scrollY - 20}px`;
+
+  contrastWarnings.push(warning);
 }
