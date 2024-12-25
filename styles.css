@@ -17,17 +17,6 @@ label {
   font-size: 16px;
 }
 
-.contrast-warning {
-  position: absolute;
-  background-color: yellow;
-  color: black;
-  padding: 2px 5px;
-  border-radius: 4px;
-  font-size: 12px;
-  z-index: 9999;
-  border: 1px solid black;
-}
-
 .tab-stop-label {
   position: absolute;
   background-color: blue;
@@ -36,4 +25,30 @@ label {
   border-radius: 4px;
   font-size: 12px;
   z-index: 9999;
+}
+.contrast-warning {
+  position: absolute;
+  background-color: yellow;
+  color: black;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 9999;
+  border: 1px solid black;
+}
+
+.contrast-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: red;
+  border-radius: 50%;
+  z-index: 10000;
+}
+
+.contrast-arrow {
+  position: absolute;
+  height: 2px;
+  background-color: red;
+  z-index: 10000;
 }
