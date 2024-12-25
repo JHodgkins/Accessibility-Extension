@@ -6,21 +6,25 @@
 </head>
 <body>
   <h1>Accessibility Tools</h1>
+  
   <div>
     <label>
       <input type="checkbox" id="showHeadings"> Show Headings
     </label>
   </div>
+
   <div>
     <label>
       <input type="checkbox" id="showTabStops"> Show Tab Stops
     </label>
   </div>
+
   <div>
     <label>
       <input type="checkbox" id="contrastCheck"> Contrast Check
     </label>
   </div>
+  
   <div>
     <label for="contrastLevel">Min Contrast Ratio:</label>
     <select id="contrastLevel">
@@ -29,6 +33,11 @@
       <option value="7">7:1 (Enhanced)</option>
     </select>
   </div>
+
+  <div style="margin-top: 20px;">
+    <button id="resetAll">Reset All</button>
+  </div>
+  
   <script src="popup.js"></script>
 </body>
 </html>

@@ -1,4 +1,3 @@
-// Wait for DOM to load before adding listeners
 document.addEventListener('DOMContentLoaded', () => {
   restoreCheckboxStates();
 
@@ -19,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     executeScript('toggleContrast', event.target.checked, contrastLevel);
   });
 
-  // Event listener for contrast ratio dropdown
   document.getElementById('contrastLevel').addEventListener('change', () => {
     const contrastCheckEnabled = document.getElementById('contrastCheck').checked;
     if (contrastCheckEnabled) {
@@ -27,6 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
       updateState('contrastLevel', contrastLevel);
       executeScript('toggleContrast', true, contrastLevel);
     }
+  });
+
+  // Reset all features
+  document.getElementById('resetAll').addEventListener('click', () => {
+    resetAll();
   });
 });
 
@@ -56,7 +59,7 @@ function updateState(key, value) {
   chrome.storage.local.set({ [key]: value });
 }
 
-// Execute content script and send message
+// Execute content scripts and send message
 async function executeScript(action, checked, contrastLevel = null) {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab) return;
@@ -66,7 +69,7 @@ async function executeScript(action, checked, contrastLevel = null) {
   // Inject content script if not already present
   await chrome.scripting.executeScript({
     target: { tabId: tabId },
-    files: ['content.js']
+    files: ['content/main.js']
   });
 
   // Send message to content script to toggle features
@@ -75,4 +78,31 @@ async function executeScript(action, checked, contrastLevel = null) {
     checked: checked,
     contrastLevel: contrastLevel
   });
+}
+
+// Reset all features
+async function resetAll() {
+  // Uncheck all checkboxes
+  document.getElementById('showHeadings').checked = false;
+  document.getElementById('showTabStops').checked = false;
+  document.getElementById('contrastCheck').checked = false;
+
+  // Reset state in storage
+  chrome.storage.local.set({
+    showHeadings: false,
+    showTabStops: false,
+    contrastCheck: false
+  });
+
+  // Send reset command to content scripts
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (tab) {
+    const tabId = tab.id;
+    chrome.scripting.executeScript({
+      target: { tabId: tabId },
+      files: ['content/main.js']
+    });
+
+    chrome.tabs.sendMessage(tabId, { action: 'resetAll' });
+  }
 }

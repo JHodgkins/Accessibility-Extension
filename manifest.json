@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Accessibility Checker",
-  "version": "1.5",
-  "description": "Check accessibility by highlighting headings, tab stops, and contrast.",
+  "version": "0.2",
+  "description": "Highlight headings, tab stops, and check contrast ratios.",
   "permissions": ["scripting", "activeTab", "storage"],
   "host_permissions": ["<all_urls>"],
   "background": {
@@ -19,7 +19,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": ["content/main.js"]
     }
   ]
 }
