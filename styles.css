@@ -1,10 +1,14 @@
+html {
+    font-size: 100%; /* Sets base font size to 16px */
+}
+
 .heading-label {
     position: absolute;
-    background-color: red;
+    background-color: #006400; /* Dark green for better contrast with white text */
     color: white;
-    padding: 2px 6px;
-    font-size: 14px;
-    border-radius: 4px;
+    padding: 0.125rem 0.375rem; /* 2px 6px */
+    font-size: 1rem; /* 16px */
+    border-radius: 0.25rem; /* 4px */
     z-index: 9999;
     white-space: nowrap;
     font-weight: bold;
@@ -14,15 +18,100 @@
     position: absolute;
     background-color: orange;
     color: black;
-    padding: 4px 8px;
-    font-size: 14px;
-    border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 0.25rem 0.5rem; /* 4px 8px */
+    font-size: 1rem; /* 16px */
+    border-radius: 0.25rem; /* 4px */
+    box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.2); /* 2px 5px */
     z-index: 10000;
     white-space: nowrap;
 }
 
 /* Outline for Low Contrast Elements */
 .low-contrast {
-    outline: 2px solid orange !important;
+    outline: 0.125rem solid orange !important;
+}
+
+body {
+    width: 300px;
+    padding: 0.625rem; /* 10px */
+    font-family: Arial, sans-serif;
+    font-size: 100%;
+}
+
+h1 {
+    font-size: 1.25rem; /* 20px */
+    margin-bottom: 0.9375rem; /* 15px */
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem; /* 10px */
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem; /* 10px */
+}
+
+.control-group label {
+    font-size: 1rem; /* 16px */
+}
+
+button {
+    padding: 0.5rem 1rem; /* 8px 16px */
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 0.25rem; /* 4px */
+    cursor: pointer;
+    font-size: 0.875rem; /* 14px */
+}
+
+button:hover {
+    background-color: #0052a3;
+}
+
+/* Focus styles */
+:focus {
+    outline: 0.1875rem solid #0066cc; /* 3px */
+    outline-offset: 0.125rem; /* 2px */
+}
+
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+:focus-visible {
+    outline: 0.1875rem solid #0066cc; /* 3px */
+    outline-offset: 0.125rem; /* 2px */
+    box-shadow: 0 0 0 0.125rem white, 0 0 0 0.3125rem rgba(0, 102, 204, 0.4); /* 2px, 5px */
+}
+
+/* Checkbox focus styles */
+input[type="checkbox"]:focus-visible {
+    outline: 0.1875rem solid #0066cc; /* 3px */
+    outline-offset: 0.125rem; /* 2px */
+}
+
+/* Button focus styles */
+button:focus-visible {
+    outline: 0.1875rem solid #0066cc; /* 3px */
+    outline-offset: 0.125rem; /* 2px */
+    box-shadow: 0 0 0 0.125rem white, 0 0 0 0.3125rem rgba(0, 102, 204, 0.4); /* 2px, 5px */
+}
+
+/* Reset button styles */
+button#resetAll {
+    background-color: #dc3545;
+}
+
+button#resetAll:hover {
+    background-color: #c82333;
+}
+
+button#resetAll:focus-visible {
+    outline-color: #dc3545;
+    box-shadow: 0 0 0 0.125rem white, 0 0 0 0.3125rem rgba(220, 53, 69, 0.4); /* 2px, 5px */
 }

@@ -73,11 +73,11 @@ function showHeadings(enabled) {
         levelIndicator.style.cssText = `
             display: inline-flex;
             align-items: center;
-            background: #4CAF50;
+            background: #006400;
             color: white;
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 16px;
             font-family: monospace;
             font-weight: bold;
             margin-right: 5px;
