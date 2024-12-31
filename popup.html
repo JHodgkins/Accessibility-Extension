@@ -1,43 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Accessibility Checker</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Checker</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Accessibility Tools</h1>
-  
-  <div>
-    <label>
-      <input type="checkbox" id="showHeadings"> Show Headings
-    </label>
-  </div>
-
-  <div>
-    <label>
-      <input type="checkbox" id="showTabStops"> Show Tab Stops
-    </label>
-  </div>
-
-  <div>
-    <label>
-      <input type="checkbox" id="contrastCheck"> Contrast Check
-    </label>
-  </div>
-  
-  <div>
-    <label for="contrastLevel">Min Contrast Ratio:</label>
-    <select id="contrastLevel">
-      <option value="4.5">4.5:1 (Normal Text)</option>
-      <option value="3">3:1 (Large Text)</option>
-      <option value="7">7:1 (Enhanced)</option>
-    </select>
-  </div>
-
-  <div style="margin-top: 20px;">
+    <h2>Accessibility Checker v3</h2>
+    <div>
+        <label>
+            <input type="checkbox" id="showHeadings"> Show Headings
+        </label>
+    </div>
+    <div>
+        <label>
+            <input type="checkbox" id="showTabStops"> Show Tab Stops
+        </label>
+    </div>
+    <div>
+        <label>
+            <input type="checkbox" id="checkAltText"> Check Alt Text
+        </label>
+    </div>
+    <div>
+        <label>
+            <input type="checkbox" id="contrastCheck"> Contrast Check
+        </label>
+        <select id="contrastType">
+            <option value="largeText">Large Text (3:1)</option>
+            <option value="normalText">Normal Text (4.5:1)</option>
+            <option value="uiElements">Icons and Borders (3:1)</option>
+        </select>
+    </div>
     <button id="resetAll">Reset All</button>
-  </div>
-  
-  <script src="popup.js"></script>
+    <script src="popup.js"></script>
 </body>
 </html>

@@ -1,25 +1,28 @@
 {
-  "manifest_version": 3,
-  "name": "Accessibility Checker",
-  "version": "0.2",
-  "description": "Highlight headings, tab stops, and check contrast ratios.",
-  "permissions": ["scripting", "activeTab", "storage"],
-  "host_permissions": ["<all_urls>"],
-  "background": {
-    "service_worker": "background.js"
-  },
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "icon.png",
-      "48": "icon.png",
-      "128": "icon.png"
+    "manifest_version": 3,
+    "name": "Accessibility Checker",
+    "version": "1.0",
+    "description": "Highlights headings, tab stops, and checks contrast ratios.",
+    "permissions": ["scripting", "activeTab", "storage"],
+    "host_permissions": [
+      "http://*/*",
+      "https://*/*",
+      "http://localhost/*",
+      "http://127.0.0.1/*"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "web_accessible_resources": [{
+      "resources": ["content/headings.js", "content/tabstops.js", "content/contrast.js", "content/alttext.js"],
+      "matches": ["<all_urls>"]
+    }],
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png"
+      }
     }
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content/main.js"]
-    }
-  ]
-}
+  }

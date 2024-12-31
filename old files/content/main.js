@@ -1,6 +1,9 @@
 chrome.runtime.onMessage.addListener((message) => {
     if (message.action === 'resetAll') {
       resetAllHighlights();
+      chrome.runtime.sendMessage({ action: 'resetHeadings' });
+      chrome.runtime.sendMessage({ action: 'resetTabStops' });
+      chrome.runtime.sendMessage({ action: 'resetContrast' });
     }
   });
   

@@ -1,54 +1,28 @@
-body {
-  width: 250px;
-  padding: 10px;
-  font-family: Arial, sans-serif;
+.heading-label {
+    position: absolute;
+    background-color: red;
+    color: white;
+    padding: 2px 6px;
+    font-size: 14px;
+    border-radius: 4px;
+    z-index: 9999;
+    white-space: nowrap;
+    font-weight: bold;
 }
-
-h1 {
-  font-size: 18px;
-  margin-bottom: 15px;
-}
-
-div {
-  margin: 10px 0;
-}
-
-label {
-  font-size: 16px;
-}
-
-.tab-stop-label {
-  position: absolute;
-  background-color: blue;
-  color: white;
-  padding: 2px 5px;
-  border-radius: 4px;
-  font-size: 12px;
-  z-index: 9999;
-}
+/* Contrast Warning Tooltip */
 .contrast-warning {
-  position: absolute;
-  background-color: yellow;
-  color: black;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  z-index: 9999;
-  border: 1px solid black;
+    position: absolute;
+    background-color: orange;
+    color: black;
+    padding: 4px 8px;
+    font-size: 14px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    white-space: nowrap;
 }
 
-.contrast-dot {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background-color: red;
-  border-radius: 50%;
-  z-index: 10000;
-}
-
-.contrast-arrow {
-  position: absolute;
-  height: 2px;
-  background-color: red;
-  z-index: 10000;
+/* Outline for Low Contrast Elements */
+.low-contrast {
+    outline: 2px solid orange !important;
 }

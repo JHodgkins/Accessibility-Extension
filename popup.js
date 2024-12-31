@@ -1,108 +1,86 @@
 document.addEventListener('DOMContentLoaded', () => {
-  restoreCheckboxStates();
-
-  // Event listeners for checkboxes
-  document.getElementById('showHeadings').addEventListener('change', (event) => {
-    updateState('showHeadings', event.target.checked);
-    executeScript('toggleHeadings', event.target.checked);
-  });
-
-  document.getElementById('showTabStops').addEventListener('change', (event) => {
-    updateState('showTabStops', event.target.checked);
-    executeScript('toggleTabStops', event.target.checked);
-  });
-
-  document.getElementById('contrastCheck').addEventListener('change', (event) => {
-    updateState('contrastCheck', event.target.checked);
-    const contrastLevel = document.getElementById('contrastLevel').value;
-    executeScript('toggleContrast', event.target.checked, contrastLevel);
-  });
-
-  document.getElementById('contrastLevel').addEventListener('change', () => {
-    const contrastCheckEnabled = document.getElementById('contrastCheck').checked;
-    if (contrastCheckEnabled) {
-      const contrastLevel = document.getElementById('contrastLevel').value;
-      updateState('contrastLevel', contrastLevel);
-      executeScript('toggleContrast', true, contrastLevel);
-    }
-  });
-
-  // Reset all features
-  document.getElementById('resetAll').addEventListener('click', () => {
-    resetAll();
-  });
-});
-
-// Restore checkbox states from storage
-async function restoreCheckboxStates() {
-  chrome.storage.local.get(['showHeadings', 'showTabStops', 'contrastCheck', 'contrastLevel'], (result) => {
-    if (result.showHeadings !== undefined) {
-      document.getElementById('showHeadings').checked = result.showHeadings;
-      executeScript('toggleHeadings', result.showHeadings);
-    }
-    if (result.showTabStops !== undefined) {
-      document.getElementById('showTabStops').checked = result.showTabStops;
-      executeScript('toggleTabStops', result.showTabStops);
-    }
-    if (result.contrastCheck !== undefined) {
-      document.getElementById('contrastCheck').checked = result.contrastCheck;
-      executeScript('toggleContrast', result.contrastCheck, result.contrastLevel || 4.5);
-    }
-    if (result.contrastLevel !== undefined) {
-      document.getElementById('contrastLevel').value = result.contrastLevel;
-    }
-  });
-}
-
-// Save state to chrome.storage.local
-function updateState(key, value) {
-  chrome.storage.local.set({ [key]: value });
-}
-
-// Execute content scripts and send message
-async function executeScript(action, checked, contrastLevel = null) {
-  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab) return;
-
-  const tabId = tab.id;
-
-  // Inject content script if not already present
-  await chrome.scripting.executeScript({
-    target: { tabId: tabId },
-    files: ['content/main.js']
-  });
-
-  // Send message to content script to toggle features
-  chrome.tabs.sendMessage(tabId, {
-    action: action,
-    checked: checked,
-    contrastLevel: contrastLevel
-  });
-}
-
-// Reset all features
-async function resetAll() {
-  // Uncheck all checkboxes
-  document.getElementById('showHeadings').checked = false;
-  document.getElementById('showTabStops').checked = false;
-  document.getElementById('contrastCheck').checked = false;
-
-  // Reset state in storage
-  chrome.storage.local.set({
-    showHeadings: false,
-    showTabStops: false,
-    contrastCheck: false
-  });
-
-  // Send reset command to content scripts
-  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (tab) {
-    const tabId = tab.id;
-    chrome.scripting.executeScript({
-      target: { tabId: tabId },
-      files: ['content/main.js']
+    restoreCheckboxStates();
+  
+    document.getElementById('showHeadings').addEventListener('change', (event) => {
+      injectAndSendMessage('content/headings.js', 'toggleHeadings', event.target.checked);
+      updateState('showHeadings', event.target.checked);
+    });
+  
+    document.getElementById('showTabStops').addEventListener('change', (event) => {
+      injectAndSendMessage('content/tabstops.js', 'toggleTabStops', event.target.checked);
+      updateState('showTabStops', event.target.checked);
     });
 
-    chrome.tabs.sendMessage(tabId, { action: 'resetAll' });
+    document.getElementById('checkAltText').addEventListener('change', (event) => {
+      injectAndSendMessage('content/alttext.js', 'toggleAltText', event.target.checked);
+      updateState('checkAltText', event.target.checked);
+    });
+  
+    document.getElementById('contrastCheck').addEventListener('change', (event) => {
+      const contrastType = document.getElementById('contrastType').value;
+      injectAndSendMessage('content/contrast.js', 'toggleContrast', event.target.checked, contrastType);
+      updateState('contrastCheck', event.target.checked);
+      updateState('contrastType', contrastType);
+    });
+
+    document.getElementById('contrastType').addEventListener('change', (event) => {
+      if (document.getElementById('contrastCheck').checked) {
+        injectAndSendMessage('content/contrast.js', 'toggleContrast', true, event.target.value);
+        updateState('contrastType', event.target.value);
+      }
+    });
+  
+    document.getElementById('resetAll').addEventListener('click', resetAll);
+  });
+  
+  // Inject script and send message to active tab
+  function injectAndSendMessage(scriptFile, action, checked, contrastType = null) {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs.length > 0) {
+        chrome.scripting.executeScript({
+          target: { tabId: tabs[0].id },
+          files: [scriptFile]
+        }).then(() => {
+          chrome.tabs.sendMessage(tabs[0].id, {
+            action: action,
+            checked: checked,
+            contrastType: contrastType
+          });
+        }).catch((error) => {
+          console.error('Failed to inject content script:', error);
+        });
+      }
+    });
   }
-}
+  
+  // Restore checkbox states on popup load
+  function restoreCheckboxStates() {
+    chrome.storage.local.get(['showHeadings', 'showTabStops', 'checkAltText', 'contrastCheck', 'contrastType'], (result) => {
+      document.getElementById('showHeadings').checked = result.showHeadings || false;
+      document.getElementById('showTabStops').checked = result.showTabStops || false;
+      document.getElementById('checkAltText').checked = result.checkAltText || false;
+      document.getElementById('contrastCheck').checked = result.contrastCheck || false;
+      document.getElementById('contrastType').value = result.contrastType || 'normalText';
+    });
+  }
+  
+  function updateState(key, value) {
+    chrome.storage.local.set({ [key]: value });
+  }
+  
+  // Reset all highlights and tooltips
+  function resetAll() {
+    injectAndSendMessage('content/main.js', 'resetAll');
+    chrome.storage.local.set({
+      showHeadings: false,
+      showTabStops: false,
+      checkAltText: false,
+      contrastCheck: false
+    });
+  
+    document.getElementById('showHeadings').checked = false;
+    document.getElementById('showTabStops').checked = false;
+    document.getElementById('checkAltText').checked = false;
+    document.getElementById('contrastCheck').checked = false;
+  }
+  

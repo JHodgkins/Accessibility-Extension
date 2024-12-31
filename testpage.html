@@ -3,11 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Accessibility Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        /* Test cases for large text (3:1 ratio) */
+        .low-contrast-large {
+            color: #767676; /* Gray on white, roughly 4.5:1 */
+            font-size: 24px;
+        }
+        .very-low-contrast-large {
+            color: #999999; /* Light gray on white, roughly 2.8:1 */
+            font-size: 24px;
+        }
+        
+        /* Test cases for normal text (4.5:1 ratio) */
+        .low-contrast-normal {
+            color: #767676; /* Gray on white, roughly 4.5:1 */
+        }
+        .very-low-contrast-normal {
+            color: #999999; /* Light gray on white, roughly 2.8:1 */
+        }
+        
+        /* Test cases for UI elements (3:1 ratio) */
+        .form-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f8f8;
+        }
+        .low-contrast-border {
+            border: 2px solid #CCCCCC; /* Light gray border */
+            padding: 5px;
+        }
+        .icon {
+            width: 24px;
+            height: 24px;
+            display: inline-block;
+            background: #DDDDDD; /* Very light gray */
+            margin: 5px;
+        }
+        
+        /* Test case sections */
+        .test-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body>
-    <div style="background-color: white; color: lightgray; font-size: 18px;">
-        This is low-contrast text for testing.
-      </div>
+    <h1>Accessibility Test Page</h1>
+
+    <div class="test-section">
+        <h2>Large Text Tests (3:1 minimum)</h2>
+        <h1 class="very-low-contrast-large">This heading has very low contrast</h1>
+        <h2 class="low-contrast-large">This heading has borderline contrast</h2>
+        <h3 style="color: #333333; font-size: 24px;">This heading has good contrast</h3>
+    </div>
+
+    <div class="test-section">
+        <h2>Normal Text Tests (4.5:1 minimum)</h2>
+        <p class="very-low-contrast-normal">This paragraph has very low contrast and should fail the test.</p>
+        <p class="low-contrast-normal">This paragraph has borderline contrast and might fail depending on exact measurements.</p>
+        <p style="color: #333333;">This paragraph has good contrast and should pass.</p>
+        <a href="#" class="very-low-contrast-normal">This is a low contrast link</a>
+    </div>
+
+    <div class="test-section">
+        <h2>UI Elements Tests (3:1 minimum)</h2>
+        <div class="form-section">
+            <form>
+                <div>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" class="low-contrast-border">
+                </div>
+                <div style="margin-top: 10px;">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" style="border: 2px solid #DDDDDD;">
+                </div>
+                <div style="margin-top: 10px;">
+                    <label for="message">Message:</label>
+                    <textarea id="message" class="low-contrast-border"></textarea>
+                </div>
+            </form>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <span class="icon" title="Settings"></span>
+            <span class="icon" style="background: #CCCCCC;" title="Profile"></span>
+            <span class="icon" style="background: #999999;" title="Menu"></span>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Mixed Content Tests</h2>
+        <div style="background: #f0f0f0; padding: 20px;">
+            <h3 class="very-low-contrast-large">Low Contrast Heading</h3>
+            <p class="very-low-contrast-normal">Low contrast paragraph within a slightly gray background.</p>
+            <input type="text" class="low-contrast-border" placeholder="Low contrast input">
+            <span class="icon" style="background: #DDDDDD;"></span>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Image Alt Text Tests</h2>
+        <!-- Image with no alt attribute -->
+        <img src="icon.png" width="100">
+        
+        <!-- Image with empty alt (not marked as decorative) -->
+        <img src="icon.png" alt="" width="100">
+        
+        <!-- Decorative image with empty alt -->
+        <img src="icon.png" alt="" role="presentation" width="100">
+        
+        <!-- Image with proper alt text -->
+        <img src="icon.png" alt="Extension icon showing accessibility features" width="100">
+        
+        <!-- Image with filename as alt text (common mistake) -->
+        <img src="icon.png" alt="icon.png" width="100">
+    </div>
 </body>
 </html>
