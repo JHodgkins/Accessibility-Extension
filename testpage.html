@@ -53,78 +53,186 @@
             padding: 20px;
             border: 1px solid #ddd;
         }
+        
+        .skip-link {
+            position: absolute;
+            left: -999px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+        .skip-link:focus {
+            left: 20px;
+            top: 20px;
+            width: auto;
+            height: auto;
+            padding: 10px 20px;
+            background: #fff;
+            border: 2px solid #000;
+            z-index: 9999;
+        }
+        nav {
+            background: #f0f0f0;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        main {
+            padding: 1rem;
+        }
+        form {
+            margin: 2rem 0;
+        }
+        .custom-heading {
+            font-weight: bold;
+            margin: 1em 0;
+        }
+        .heading-1 {
+            font-size: 2em;
+        }
+        .heading-2 {
+            font-size: 1.5em;
+        }
+        .heading-3 {
+            font-size: 1.17em;
+        }
     </style>
 </head>
 <body>
-    <h1>Accessibility Test Page</h1>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <div class="test-section">
-        <h2>Large Text Tests (3:1 minimum)</h2>
-        <h1 class="very-low-contrast-large">This heading has very low contrast</h1>
-        <h2 class="low-contrast-large">This heading has borderline contrast</h2>
-        <h3 style="color: #333333; font-size: 24px;">This heading has good contrast</h3>
-    </div>
+    <nav aria-label="Main navigation">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
 
-    <div class="test-section">
-        <h2>Normal Text Tests (4.5:1 minimum)</h2>
-        <p class="very-low-contrast-normal">This paragraph has very low contrast and should fail the test.</p>
-        <p class="low-contrast-normal">This paragraph has borderline contrast and might fail depending on exact measurements.</p>
-        <p style="color: #333333;">This paragraph has good contrast and should pass.</p>
-        <a href="#" class="very-low-contrast-normal">This is a low contrast link</a>
-    </div>
+    <main id="main-content">
+        <h1>Accessibility Test Page</h1>
 
-    <div class="test-section">
-        <h2>UI Elements Tests (3:1 minimum)</h2>
-        <div class="form-section">
-            <form>
-                <div>
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" class="low-contrast-border">
-                </div>
-                <div style="margin-top: 10px;">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" style="border: 2px solid #DDDDDD;">
-                </div>
-                <div style="margin-top: 10px;">
-                    <label for="message">Message:</label>
-                    <textarea id="message" class="low-contrast-border"></textarea>
-                </div>
-            </form>
+        <div class="test-section">
+            <h2>Large Text Tests (3:1 minimum)</h2>
+            <h1 class="very-low-contrast-large">This heading has very low contrast</h1>
+            <h2 class="low-contrast-large">This heading has borderline contrast</h2>
+            <h3 style="color: #333333; font-size: 24px;">This heading has good contrast</h3>
         </div>
-        
-        <div style="margin-top: 20px;">
-            <span class="icon" title="Settings"></span>
-            <span class="icon" style="background: #CCCCCC;" title="Profile"></span>
-            <span class="icon" style="background: #999999;" title="Menu"></span>
-        </div>
-    </div>
 
-    <div class="test-section">
-        <h2>Mixed Content Tests</h2>
-        <div style="background: #f0f0f0; padding: 20px;">
-            <h3 class="very-low-contrast-large">Low Contrast Heading</h3>
-            <p class="very-low-contrast-normal">Low contrast paragraph within a slightly gray background.</p>
-            <input type="text" class="low-contrast-border" placeholder="Low contrast input">
-            <span class="icon" style="background: #DDDDDD;"></span>
+        <div class="test-section">
+            <h2>Normal Text Tests (4.5:1 minimum)</h2>
+            <p class="very-low-contrast-normal">This paragraph has very low contrast and should fail the test.</p>
+            <p class="low-contrast-normal">This paragraph has borderline contrast and might fail depending on exact measurements.</p>
+            <p style="color: #333333;">This paragraph has good contrast and should pass.</p>
+            <a href="#" class="very-low-contrast-normal">This is a low contrast link</a>
         </div>
-    </div>
 
-    <div class="test-section">
-        <h2>Image Alt Text Tests</h2>
-        <!-- Image with no alt attribute -->
-        <img src="icon.png" width="100">
-        
-        <!-- Image with empty alt (not marked as decorative) -->
-        <img src="icon.png" alt="" width="100">
-        
-        <!-- Decorative image with empty alt -->
-        <img src="icon.png" alt="" role="presentation" width="100">
-        
-        <!-- Image with proper alt text -->
-        <img src="icon.png" alt="Extension icon showing accessibility features" width="100">
-        
-        <!-- Image with filename as alt text (common mistake) -->
-        <img src="icon.png" alt="icon.png" width="100">
-    </div>
+        <div class="test-section">
+            <h2>UI Elements Tests (3:1 minimum)</h2>
+            <div class="form-section">
+                <form>
+                    <div>
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" class="low-contrast-border">
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" style="border: 2px solid #DDDDDD;">
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label for="message">Message:</label>
+                        <textarea id="message" class="low-contrast-border"></textarea>
+                    </div>
+                </form>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <span class="icon" title="Settings"></span>
+                <span class="icon" style="background: #CCCCCC;" title="Profile"></span>
+                <span class="icon" style="background: #999999;" title="Menu"></span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Mixed Content Tests</h2>
+            <div style="background: #f0f0f0; padding: 20px;">
+                <h3 class="very-low-contrast-large">Low Contrast Heading</h3>
+                <p class="very-low-contrast-normal">Low contrast paragraph within a slightly gray background.</p>
+                <input type="text" class="low-contrast-border" placeholder="Low contrast input">
+                <span class="icon" style="background: #DDDDDD;"></span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Image Alt Text Tests</h2>
+            <!-- Image with no alt attribute -->
+            <img src="icon.png" width="100">
+            
+            <!-- Image with empty alt (not marked as decorative) -->
+            <img src="icon.png" alt="" width="100">
+            
+            <!-- Decorative image with empty alt -->
+            <img src="icon.png" alt="" role="presentation" width="100">
+            
+            <!-- Image with proper alt text -->
+            <img src="icon.png" alt="Extension icon showing accessibility features" width="100">
+            
+            <!-- Image with filename as alt text (common mistake) -->
+            <img src="icon.png" alt="icon.png" width="100">
+        </div>
+
+        <div class="test-section">
+            <h2>ARIA Heading Examples</h2>
+            <!-- Regular heading -->
+            <h1>Welcome to Our Test Page</h1>
+            
+            <!-- ARIA heading with explicit level -->
+            <div role="heading" aria-level="2" class="custom-heading heading-2">
+                ARIA Heading Level 2
+            </div>
+
+            <section>
+                <h2>Regular Headings Section</h2>
+                <p>This section uses traditional HTML heading tags.</p>
+                <h3>Subsection with H3</h3>
+                <p>Content under H3 heading.</p>
+            </section>
+
+            <section>
+                <!-- ARIA headings section -->
+                <div role="heading" aria-level="2" class="custom-heading heading-2">
+                    ARIA Headings Section
+                </div>
+                <p>This section demonstrates various ways to create headings with ARIA.</p>
+                
+                <!-- ARIA heading with explicit level -->
+                <div role="heading" aria-level="3" class="custom-heading heading-3">
+                    ARIA Subsection Level 3
+                </div>
+                <p>Content under ARIA heading level 3.</p>
+
+                <!-- ARIA heading without level (defaults to 2) -->
+                <div role="heading" class="custom-heading heading-2">
+                    ARIA Heading (Default Level 2)
+                </div>
+                <p>This heading uses the default level of 2 when no aria-level is specified.</p>
+            </section>
+
+            <!-- Mix of HTML and ARIA headings -->
+            <section>
+                <h2>Mixed Heading Types</h2>
+                <div role="heading" aria-level="3" class="custom-heading heading-3">
+                    ARIA Heading in Mixed Context
+                </div>
+                <p>This section shows how HTML and ARIA headings can be used together.</p>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div role="heading" aria-level="2" class="custom-heading heading-2">
+            Footer Section
+        </div>
+        <p>&copy; 2024 Test Page</p>
+    </footer>
 </body>
 </html>

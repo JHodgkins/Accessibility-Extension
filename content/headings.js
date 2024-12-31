@@ -10,49 +10,137 @@ chrome.runtime.onMessage.addListener((message) => {
     }
 });
 
-// Show headings and add labels with heading levels
 function showHeadings(enabled) {
-    resetHeadings();  // Clear existing labels and outlines
+    resetHeadings();
     if (!enabled) return;
 
-    document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
-        heading.style.outline = '2px solid red';
+    // Create container for descriptions (hidden from view but available to screen readers)
+    const descriptionsContainer = document.createElement('div');
+    descriptionsContainer.id = 'heading-descriptions';
+    descriptionsContainer.style.cssText = 'position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;';
+    document.body.appendChild(descriptionsContainer);
 
-        // Create label to display heading level (H1, H2, etc.)
-        const label = document.createElement('div');
-        label.textContent = heading.tagName;  // Outputs "H1", "H2", etc.
-        label.className = 'heading-label';
+    // Find all heading elements and elements with role="heading"
+    const headings = [
+        ...document.querySelectorAll('h1, h2, h3, h4, h5, h6'),
+        ...document.querySelectorAll('[role="heading"]')
+    ];
 
-        // Position label above the heading
-        const rect = heading.getBoundingClientRect();
-        label.style.position = 'absolute';
-        label.style.left = `${rect.left + window.scrollX}px`;
-        label.style.top = `${rect.top + window.scrollY - 25}px`;  // Place slightly above the heading
-        label.style.backgroundColor = 'red';
-        label.style.color = 'white';
-        label.style.padding = '2px 6px';
-        label.style.borderRadius = '4px';
-        label.style.fontSize = '14px';
-        label.style.zIndex = '9999';
-
-        document.body.appendChild(label);
-
-        // Store label to remove it later during reset
-        if (!window.accessibilityChecker.headingLabels) {
-            window.accessibilityChecker.headingLabels = [];
+    headings.forEach((heading, index) => {
+        // Get the heading level
+        let level;
+        if (heading.hasAttribute('aria-level')) {
+            level = parseInt(heading.getAttribute('aria-level'));
+        } else if (heading.tagName.startsWith('H')) {
+            level = parseInt(heading.tagName[1]);
+        } else {
+            // Default level is 2 per ARIA spec if not specified
+            level = 2;
         }
-        window.accessibilityChecker.headingLabels.push(label);
+
+        // Create description for screen readers
+        const description = document.createElement('div');
+        description.id = `heading-desc-${index}`;
+        const isAriaHeading = heading.getAttribute('role') === 'heading';
+        description.textContent = `Highlighted heading level ${level}${isAriaHeading ? ' (ARIA heading)' : ''}`;
+        descriptionsContainer.appendChild(description);
+
+        // Add aria-describedby to the heading
+        const existingDescribedby = heading.getAttribute('aria-describedby');
+        heading.setAttribute('aria-describedby',
+            existingDescribedby
+                ? `${existingDescribedby} heading-desc-${index}`
+                : `heading-desc-${index}`
+        );
+
+        // Create outline based on heading level
+        const outline = document.createElement('div');
+        outline.className = 'heading-indicator outline';
+        outline.style.cssText = `
+            position: absolute;
+            border: 2px solid #4CAF50;
+            border-radius: 4px;
+            padding: 4px;
+            margin: -4px;
+            pointer-events: none;
+            z-index: 9999;
+        `;
+
+        // Create level indicator
+        const levelIndicator = document.createElement('div');
+        levelIndicator.className = 'heading-level';
+        levelIndicator.textContent = 'H' + level;
+        levelIndicator.style.cssText = `
+            display: inline-flex;
+            align-items: center;
+            background: #4CAF50;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: monospace;
+            font-weight: bold;
+            margin-right: 5px;
+        `;
+
+        // Add source indicator if it's an ARIA heading
+        if (isAriaHeading) {
+            levelIndicator.textContent += ' (ARIA)';
+            outline.style.borderStyle = 'dashed';
+        }
+
+        // Create wrapper for inline display
+        const wrapper = document.createElement('span');
+        wrapper.className = 'heading-indicator wrapper';
+        wrapper.style.cssText = `
+            display: inline-flex;
+            align-items: center;
+            margin-right: 5px;
+        `;
+        wrapper.appendChild(levelIndicator);
+
+        // Insert wrapper before the heading's content
+        if (heading.firstChild) {
+            heading.insertBefore(wrapper, heading.firstChild);
+        } else {
+            heading.appendChild(wrapper);
+        }
+
+        // Add outline
+        const rect = heading.getBoundingClientRect();
+        outline.style.width = rect.width + 'px';
+        outline.style.height = rect.height + 'px';
+        outline.style.top = rect.top + window.scrollY + 'px';
+        outline.style.left = rect.left + window.scrollX + 'px';
+
+        // Add to the page
+        document.body.appendChild(outline);
+        heading.dataset.hasHeadingIndicator = 'true';
     });
 }
 
-// Reset and remove all heading labels and outlines
 function resetHeadings() {
-    // Remove floating labels
-    if (window.accessibilityChecker.headingLabels) {
-        window.accessibilityChecker.headingLabels.forEach(label => label.remove());
-        window.accessibilityChecker.headingLabels = [];
-    }
+    // Remove all heading indicators (outlines and wrappers)
+    document.querySelectorAll('.heading-indicator').forEach(el => el.remove());
 
-    // Remove red outlines from headings
-    document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(el => el.style.outline = 'none');
+    // Clean up elements that had indicators
+    document.querySelectorAll('[data-has-heading-indicator]').forEach(el => {
+        // Remove aria-describedby for headings
+        const describedby = el.getAttribute('aria-describedby');
+        if (describedby) {
+            const descriptions = describedby.split(' ').filter(id => !id.startsWith('heading-desc-'));
+            if (descriptions.length > 0) {
+                el.setAttribute('aria-describedby', descriptions.join(' '));
+            } else {
+                el.removeAttribute('aria-describedby');
+            }
+        }
+        delete el.dataset.hasHeadingIndicator;
+    });
+
+    // Remove descriptions container
+    const descriptionsContainer = document.getElementById('heading-descriptions');
+    if (descriptionsContainer) {
+        descriptionsContainer.remove();
+    }
 }
