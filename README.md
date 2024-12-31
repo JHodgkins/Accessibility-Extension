@@ -1,20 +1,22 @@
-# Accessibility Checker Chrome Extension
+# Accessibility Extension
 
-A Chrome extension that helps identify and test for common accessibility issues on web pages.
+A Chrome extension to help identify and test accessibility features on web pages.
 
 ## Features
 
-- **Heading Highlighter**: Visualizes heading structure and levels
-- **Tab Order Checker**: Shows the tab order of interactive elements
-- **Contrast Checker**: 
-  - Large Text (3:1 minimum contrast)
-  - Normal Text (4.5:1 minimum contrast)
-  - UI Elements (3:1 minimum contrast for icons and borders)
-- **Alt Text Checker**:
-  - Identifies missing alt attributes
-  - Warns about empty alt attributes on non-decorative images
-  - Shows alt text content for review
-  - Identifies properly marked decorative images
+### 1. Heading Structure Visualization
+- Highlights all headings (h1-h6 and ARIA headings) on the page
+- Shows heading levels with clear visual indicators
+- Supports both HTML headings and ARIA role="heading" elements
+- Screen reader announcements for heading levels
+- Special indication for ARIA headings
+
+### 2. Tab Stop Navigation
+- Displays tab order numbers for all focusable elements
+- Numbers are inline with elements for clear visual reference
+- Reveals hidden elements (like skip links) that become visible on focus
+- Screen reader announcements for tab stop order
+- Special handling for elements hidden until focus
 
 ## Installation
 
@@ -26,30 +28,28 @@ A Chrome extension that helps identify and test for common accessibility issues 
 ## Usage
 
 1. Click the extension icon in your Chrome toolbar
-2. Select which accessibility features you want to check:
-   - Show Headings
-   - Show Tab Stops
-   - Check Alt Text
-   - Contrast Check (with options for different contrast requirements)
-3. The extension will highlight relevant elements and show detailed information
+2. Use the toggles to enable/disable features:
+   - "Show Headings" to visualize heading structure
+   - "Show Tab Stops" to display tab navigation order
+3. Use the "Reset All" button to clear all indicators
+
+## Testing
+
+The extension includes a test page (`testpage.html`) that demonstrates:
+- Different heading levels and ARIA headings
+- Skip links and other hidden focusable elements
+- Various tab stop scenarios
 
 ## Development
 
-The extension is built using vanilla JavaScript and Chrome Extension APIs. Key files:
-
-- `manifest.json`: Extension configuration
-- `popup.html/js`: Extension popup interface
-- `content/*.js`: Content scripts for different accessibility checks
-- `background.js`: Background service worker
-- `styles.css`: Extension styles
+This extension is built using:
+- HTML/CSS for the popup interface
+- JavaScript for the core functionality
+- Chrome Extension APIs for browser integration
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Feel free to submit issues and pull requests for new features or bug fixes.
 
 ## License
 
